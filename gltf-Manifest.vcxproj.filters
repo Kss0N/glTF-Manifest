@@ -1,0 +1,517 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="1.0\2cylinderengine\gltf\2CylinderEngine.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\2cylinderengine\gltf-materialscommon\2CylinderEngine.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\avocado\gltf\Avocado.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\barramundifish\gltf\BarramundiFish.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\box\gltf\Box.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\box\gltf-materialscommon\Box.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\boxanimated\gltf\BoxAnimated.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\boxanimated\gltf-materialscommon\BoxAnimated.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\boxsemantics\gltf\BoxSemantics.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\boxsemantics\gltf-materialscommon\BoxSemantics.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\boxtextured\gltf\BoxTextured.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\boxtextured\gltf-materialscommon\BoxTextured.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\boxwithoutindices\gltf\BoxWithoutIndices.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\boxwithoutindices\gltf-materialscommon\BoxWithoutIndices.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\brainstem\gltf\BrainStem.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\brainstem\gltf-materialscommon\BrainStem.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\buggy\gltf\Buggy.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\buggy\gltf-materialscommon\Buggy.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\cesiumman\gltf\CesiumMan.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\cesiumman\gltf-materialscommon\CesiumMan.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\cesiummilktruck\gltf\CesiumMilkTruck.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\cesiummilktruck\gltf-materialscommon\CesiumMilkTruck.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\duck\gltf\Duck.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\duck\gltf-materialscommon\Duck.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\gearboxassy\gltf\GearboxAssy.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\gearboxassy\gltf-materialscommon\GearboxAssy.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\monster\gltf\Monster.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\monster\gltf-materialscommon\Monster.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\reciprocatingsaw\gltf\ReciprocatingSaw.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\reciprocatingsaw\gltf-materialscommon\ReciprocatingSaw.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\riggedfigure\gltf\RiggedFigure.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\riggedfigure\gltf-materialscommon\RiggedFigure.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\riggedsimple\gltf\RiggedSimple.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\riggedsimple\gltf-materialscommon\RiggedSimple.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\smilingface\gltf\SmilingFace.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\vc\gltf\VC.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\vc\gltf-materialscommon\VC.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\walkinglady\gltf\WalkingLady.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="1.0\walkinglady\gltf-materialscommon\WalkingLady.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\2cylinderengine\gltf\2CylinderEngine0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\2cylinderengine\gltf-draco\2CylinderEngine.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\abeautifulgame\gltf\ABeautifulGame.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\alphablendmodetest\gltf\AlphaBlendModeTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\animatedcube\gltf\AnimatedCube.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\animatedmorphcube\gltf\AnimatedMorphCube.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\animatedmorphcube\gltf-quantized\AnimatedMorphCube.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\animatedmorphsphere\gltf\AnimatedMorphSphere.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\animatedtriangle\gltf\animation.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\animatedtriangle\gltf\simpleTriangle.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\antiquecamera\gltf\AntiqueCamera.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\attenuationtest\gltf\AttenuationTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\avocado\gltf\Avocado.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\avocado\gltf-draco\Avocado.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\avocado\gltf-quantized\Avocado.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\barramundifish\gltf\BarramundiFish.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\barramundifish\gltf-draco\BarramundiFish.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\boombox\gltf\BoomBox.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\boombox\gltf-draco\BoomBox.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\boomboxwithaxes\gltf\BoomBoxWithAxes.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\box\gltf\Box0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\box\gltf-draco\Box.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\box with spaces\gltf\Box With Spaces.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\boxanimated\gltf\BoxAnimated0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\boxinterleaved\gltf\BoxInterleaved.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\boxtextured\gltf\BoxTextured0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\boxtexturednonpoweroftwo\gltf\BoxTextured0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\boxvertexcolors\gltf\buffer.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\brainstem\gltf\BrainStem0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\brainstem\gltf-draco\BrainStem0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\brainstem\gltf-meshopt\BrainStem.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\buggy\gltf\Buggy0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\buggy\gltf-draco\Buggy.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\cameras\gltf\simpleSquare.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\cesiumman\gltf\CesiumMan_data.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\cesiumman\gltf-draco\CesiumMan_data.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\cesiummilktruck\gltf\CesiumMilkTruck_data.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\cesiummilktruck\gltf-draco\CesiumMilkTruck_data.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\clearcoattest\gltf\ClearCoatTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\corset\gltf\Corset.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\corset\gltf-draco\Corset.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\cube\gltf\Cube.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\damagedhelmet\gltf\DamagedHelmet.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\dragonattenuation\gltf\DragonAttenuation.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\dragonattenuation\gltf-meshopt\DragonAttenuation.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\duck\gltf\Duck0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\duck\gltf-draco\Duck.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\duck\gltf-quantized\Duck.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\emissivestrengthtest\gltf\EmissiveStrengthTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\environmenttest\gltf\EnvironmentTest_binary.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\environmenttest\gltf-ibl\EnvironmentTest_binary.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\flighthelmet\gltf\FlightHelmet.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\fox\gltf\Fox.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\gearboxassy\gltf\GearboxAssy0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\gearboxassy\gltf-draco\GearboxAssy.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\glamvelvetsofa\gltf\GlamVelvetSofa.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\interpolationtest\gltf\interpolation.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\iridescencedielectricspheres\gltf\IridescenceDielectricSpheres.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\iridescencelamp\gltf\IridescenceLamp.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\iridescencemetallicspheres\gltf\IridescenceMetallicSpheres.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\iridescencesuzanne\gltf\IridescenceSuzanne.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\iridescentdishwitholives\gltf\IridescentDishWithOlives.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\lantern\gltf\Lantern.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\lantern\gltf-draco\Lantern.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\lantern\gltf-quantized\Lantern.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\lightspunctuallamp\gltf\LightsPunctualLamp.data.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\materialsvariantsshoe\gltf\MaterialsVariantsShoe.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\metalroughspheres\gltf\MetalRoughSpheres0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\metalroughspheresnotextures\gltf\MetalRoughSpheresNoTextures.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\morphprimitivestest\gltf\MorphPrimitivesTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\morphprimitivestest\gltf-draco\MorphPrimitivesTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\morphstresstest\gltf\MorphStressTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\mosquitoinamber\gltf\MosquitoInAmber.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\multiplescenes\gltf\simpleSquare.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\multiplescenes\gltf\simpleTriangle.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\multiuvtest\gltf\MultiUVTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\negativescaletest\gltf\NegativeScaleTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\normaltangentmirrortest\gltf\NormalTangentMirrorTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\normaltangenttest\gltf\NormalTangentTest0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\orientationtest\gltf\OrientationTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\reciprocatingsaw\gltf\ReciprocatingSaw0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\reciprocatingsaw\gltf-draco\ReciprocatingSaw.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\recursiveskeletons\gltf\RecursiveSkeletons.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\riggedfigure\gltf\RiggedFigure0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\riggedfigure\gltf-draco\RiggedFigure0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\riggedsimple\gltf\RiggedSimple0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\riggedsimple\gltf-draco\RiggedSimple0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\scifihelmet\gltf\SciFiHelmet.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\sheenchair\gltf\SheenChair.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\sheencloth\gltf\SheenCloth.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\simplemeshes\gltf\triangle.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\simplemorph\gltf\simpleMorphAnimation.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\simplemorph\gltf\simpleMorphGeometry.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\simpleskin\gltf\inverseBindMatrices.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\simpleskin\gltf\skinAnimation.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\simpleskin\gltf\skinGeometry.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\simpleskin\gltf\skinningData.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\simplesparseaccessor\gltf\SimpleSparseAccessor.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\specglossvsmetalrough\gltf\SpecGlossVsMetalRoughLabel.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\specglossvsmetalrough\gltf\WaterBottle.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\speculartest\gltf\SpecularTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\sponza\gltf\Sponza.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\stainedglasslamp\gltf\StainedGlassLamp.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\stainedglasslamp\gltf-jpg-png\StainedGlassLamp.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\stainedglasslamp\gltf-ktx-basisu\StainedGlassLamp.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\suzanne\gltf\Suzanne.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\texturecoordinatetest\gltf\TextureCoordinateTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\textureencodingtest\gltf\Plane.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\textureencodingtest\gltf\Sphere.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\texturelinearinterpolationtest\gltf\Plane.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\texturelinearinterpolationtest\gltf\Sphere.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\texturesettingstest\gltf\TextureSettingsTest0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\texturetransformmultitest\gltf\TextureTransformMultiTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\texturetransformtest\gltf\TextureTransformTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\toycar\gltf\ToyCar.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\transmissionroughnesstest\gltf\TransmissionRoughnessTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\transmissiontest\gltf\TransmissionTest_binary.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\triangle\gltf\simpleTriangle.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\trianglewithoutindices\gltf\triangleWithoutIndices.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\twosidedplane\gltf\TwoSidedPlane.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\unicode❤♻test\gltf\Unicode❤♻Binary.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\unlittest\gltf\UnlitTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\vc\gltf\VC0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\vc\gltf-draco\VC0.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\vertexcolortest\gltf\VertexColorTest.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\waterbottle\gltf\WaterBottle.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="2.0\waterbottle\gltf-draco\WaterBottle.bin">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+</Project>

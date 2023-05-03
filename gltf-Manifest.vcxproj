@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{A7CDF1A9-1EF1-4AA9-96B5-096438413797}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>$(SolutionDir).out\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir).obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir).out\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir).obj\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <TargetMachine>MachineX86</TargetMachine>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>%LIBRARIES%\boost_1_79_0;$(SolutionDir)externals\include;%VULKAN_SDK%\Include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>%LIBRARIES%\boost_1_79_0;$(SolutionDir)externals\include;%VULKAN_SDK%\Include</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="1.0\2cylinderengine\gltf-materialscommon\2CylinderEngine.bin" />
+    <None Include="1.0\2cylinderengine\gltf\2CylinderEngine.bin" />
+    <None Include="1.0\avocado\gltf\Avocado.bin" />
+    <None Include="1.0\barramundifish\gltf\BarramundiFish.bin" />
+    <None Include="1.0\boxanimated\gltf-materialscommon\BoxAnimated.bin" />
+    <None Include="1.0\boxanimated\gltf\BoxAnimated.bin" />
+    <None Include="1.0\boxsemantics\gltf-materialscommon\BoxSemantics.bin" />
+    <None Include="1.0\boxsemantics\gltf\BoxSemantics.bin" />
+    <None Include="1.0\boxtextured\gltf-materialscommon\BoxTextured.bin" />
+    <None Include="1.0\boxtextured\gltf\BoxTextured.bin" />
+    <None Include="1.0\boxwithoutindices\gltf-materialscommon\BoxWithoutIndices.bin" />
+    <None Include="1.0\boxwithoutindices\gltf\BoxWithoutIndices.bin" />
+    <None Include="1.0\box\gltf-materialscommon\Box.bin" />
+    <None Include="1.0\box\gltf\Box.bin" />
+    <None Include="1.0\brainstem\gltf-materialscommon\BrainStem.bin" />
+    <None Include="1.0\brainstem\gltf\BrainStem.bin" />
+    <None Include="1.0\buggy\gltf-materialscommon\Buggy.bin" />
+    <None Include="1.0\buggy\gltf\Buggy.bin" />
+    <None Include="1.0\cesiumman\gltf-materialscommon\CesiumMan.bin" />
+    <None Include="1.0\cesiumman\gltf\CesiumMan.bin" />
+    <None Include="1.0\cesiummilktruck\gltf-materialscommon\CesiumMilkTruck.bin" />
+    <None Include="1.0\cesiummilktruck\gltf\CesiumMilkTruck.bin" />
+    <None Include="1.0\duck\gltf-materialscommon\Duck.bin" />
+    <None Include="1.0\duck\gltf\Duck.bin" />
+    <None Include="1.0\gearboxassy\gltf-materialscommon\GearboxAssy.bin" />
+    <None Include="1.0\gearboxassy\gltf\GearboxAssy.bin" />
+    <None Include="1.0\monster\gltf-materialscommon\Monster.bin" />
+    <None Include="1.0\monster\gltf\Monster.bin" />
+    <None Include="1.0\reciprocatingsaw\gltf-materialscommon\ReciprocatingSaw.bin" />
+    <None Include="1.0\reciprocatingsaw\gltf\ReciprocatingSaw.bin" />
+    <None Include="1.0\riggedfigure\gltf-materialscommon\RiggedFigure.bin" />
+    <None Include="1.0\riggedfigure\gltf\RiggedFigure.bin" />
+    <None Include="1.0\riggedsimple\gltf-materialscommon\RiggedSimple.bin" />
+    <None Include="1.0\riggedsimple\gltf\RiggedSimple.bin" />
+    <None Include="1.0\smilingface\gltf\SmilingFace.bin" />
+    <None Include="1.0\vc\gltf-materialscommon\VC.bin" />
+    <None Include="1.0\vc\gltf\VC.bin" />
+    <None Include="1.0\walkinglady\gltf-materialscommon\WalkingLady.bin" />
+    <None Include="1.0\walkinglady\gltf\WalkingLady.bin" />
+    <None Include="2.0\2cylinderengine\gltf-draco\2CylinderEngine.bin" />
+    <None Include="2.0\2cylinderengine\gltf\2CylinderEngine0.bin" />
+    <None Include="2.0\abeautifulgame\gltf\ABeautifulGame.bin" />
+    <None Include="2.0\alphablendmodetest\gltf\AlphaBlendModeTest.bin" />
+    <None Include="2.0\animatedcube\gltf\AnimatedCube.bin" />
+    <None Include="2.0\animatedmorphcube\gltf-quantized\AnimatedMorphCube.bin" />
+    <None Include="2.0\animatedmorphcube\gltf\AnimatedMorphCube.bin" />
+    <None Include="2.0\animatedmorphsphere\gltf\AnimatedMorphSphere.bin" />
+    <None Include="2.0\animatedtriangle\gltf\animation.bin" />
+    <None Include="2.0\animatedtriangle\gltf\simpleTriangle.bin" />
+    <None Include="2.0\antiquecamera\gltf\AntiqueCamera.bin" />
+    <None Include="2.0\attenuationtest\gltf\AttenuationTest.bin" />
+    <None Include="2.0\avocado\gltf-draco\Avocado.bin" />
+    <None Include="2.0\avocado\gltf-quantized\Avocado.bin" />
+    <None Include="2.0\avocado\gltf\Avocado.bin" />
+    <None Include="2.0\barramundifish\gltf-draco\BarramundiFish.bin" />
+    <None Include="2.0\barramundifish\gltf\BarramundiFish.bin" />
+    <None Include="2.0\boomboxwithaxes\gltf\BoomBoxWithAxes.bin" />
+    <None Include="2.0\boombox\gltf-draco\BoomBox.bin" />
+    <None Include="2.0\boombox\gltf\BoomBox.bin" />
+    <None Include="2.0\box with spaces\gltf\Box With Spaces.bin" />
+    <None Include="2.0\boxanimated\gltf\BoxAnimated0.bin" />
+    <None Include="2.0\boxinterleaved\gltf\BoxInterleaved.bin" />
+    <None Include="2.0\boxtexturednonpoweroftwo\gltf\BoxTextured0.bin" />
+    <None Include="2.0\boxtextured\gltf\BoxTextured0.bin" />
+    <None Include="2.0\boxvertexcolors\gltf\buffer.bin" />
+    <None Include="2.0\box\gltf-draco\Box.bin" />
+    <None Include="2.0\box\gltf\Box0.bin" />
+    <None Include="2.0\brainstem\gltf-draco\BrainStem0.bin" />
+    <None Include="2.0\brainstem\gltf-meshopt\BrainStem.bin" />
+    <None Include="2.0\brainstem\gltf\BrainStem0.bin" />
+    <None Include="2.0\buggy\gltf-draco\Buggy.bin" />
+    <None Include="2.0\buggy\gltf\Buggy0.bin" />
+    <None Include="2.0\cameras\gltf\simpleSquare.bin" />
+    <None Include="2.0\cesiumman\gltf-draco\CesiumMan_data.bin" />
+    <None Include="2.0\cesiumman\gltf\CesiumMan_data.bin" />
+    <None Include="2.0\cesiummilktruck\gltf-draco\CesiumMilkTruck_data.bin" />
+    <None Include="2.0\cesiummilktruck\gltf\CesiumMilkTruck_data.bin" />
+    <None Include="2.0\clearcoattest\gltf\ClearCoatTest.bin" />
+    <None Include="2.0\corset\gltf-draco\Corset.bin" />
+    <None Include="2.0\corset\gltf\Corset.bin" />
+    <None Include="2.0\cube\gltf\Cube.bin" />
+    <None Include="2.0\damagedhelmet\gltf\DamagedHelmet.bin" />
+    <None Include="2.0\dragonattenuation\gltf-meshopt\DragonAttenuation.bin" />
+    <None Include="2.0\dragonattenuation\gltf\DragonAttenuation.bin" />
+    <None Include="2.0\duck\gltf-draco\Duck.bin" />
+    <None Include="2.0\duck\gltf-quantized\Duck.bin" />
+    <None Include="2.0\duck\gltf\Duck0.bin" />
+    <None Include="2.0\emissivestrengthtest\gltf\EmissiveStrengthTest.bin" />
+    <None Include="2.0\environmenttest\gltf-ibl\EnvironmentTest_binary.bin" />
+    <None Include="2.0\environmenttest\gltf\EnvironmentTest_binary.bin" />
+    <None Include="2.0\flighthelmet\gltf\FlightHelmet.bin" />
+    <None Include="2.0\fox\gltf\Fox.bin" />
+    <None Include="2.0\gearboxassy\gltf-draco\GearboxAssy.bin" />
+    <None Include="2.0\gearboxassy\gltf\GearboxAssy0.bin" />
+    <None Include="2.0\glamvelvetsofa\gltf\GlamVelvetSofa.bin" />
+    <None Include="2.0\interpolationtest\gltf\interpolation.bin" />
+    <None Include="2.0\iridescencedielectricspheres\gltf\IridescenceDielectricSpheres.bin" />
+    <None Include="2.0\iridescencelamp\gltf\IridescenceLamp.bin" />
+    <None Include="2.0\iridescencemetallicspheres\gltf\IridescenceMetallicSpheres.bin" />
+    <None Include="2.0\iridescencesuzanne\gltf\IridescenceSuzanne.bin" />
+    <None Include="2.0\iridescentdishwitholives\gltf\IridescentDishWithOlives.bin" />
+    <None Include="2.0\lantern\gltf-draco\Lantern.bin" />
+    <None Include="2.0\lantern\gltf-quantized\Lantern.bin" />
+    <None Include="2.0\lantern\gltf\Lantern.bin" />
+    <None Include="2.0\lightspunctuallamp\gltf\LightsPunctualLamp.data.bin" />
+    <None Include="2.0\materialsvariantsshoe\gltf\MaterialsVariantsShoe.bin" />
+    <None Include="2.0\metalroughspheresnotextures\gltf\MetalRoughSpheresNoTextures.bin" />
+    <None Include="2.0\metalroughspheres\gltf\MetalRoughSpheres0.bin" />
+    <None Include="2.0\morphprimitivestest\gltf-draco\MorphPrimitivesTest.bin" />
+    <None Include="2.0\morphprimitivestest\gltf\MorphPrimitivesTest.bin" />
+    <None Include="2.0\morphstresstest\gltf\MorphStressTest.bin" />
+    <None Include="2.0\mosquitoinamber\gltf\MosquitoInAmber.bin" />
+    <None Include="2.0\multiplescenes\gltf\simpleSquare.bin" />
+    <None Include="2.0\multiplescenes\gltf\simpleTriangle.bin" />
+    <None Include="2.0\multiuvtest\gltf\MultiUVTest.bin" />
+    <None Include="2.0\negativescaletest\gltf\NegativeScaleTest.bin" />
+    <None Include="2.0\normaltangentmirrortest\gltf\NormalTangentMirrorTest.bin" />
+    <None Include="2.0\normaltangenttest\gltf\NormalTangentTest0.bin" />
+    <None Include="2.0\orientationtest\gltf\OrientationTest.bin" />
+    <None Include="2.0\reciprocatingsaw\gltf-draco\ReciprocatingSaw.bin" />
+    <None Include="2.0\reciprocatingsaw\gltf\ReciprocatingSaw0.bin" />
+    <None Include="2.0\recursiveskeletons\gltf\RecursiveSkeletons.bin" />
+    <None Include="2.0\riggedfigure\gltf-draco\RiggedFigure0.bin" />
+    <None Include="2.0\riggedfigure\gltf\RiggedFigure0.bin" />
+    <None Include="2.0\riggedsimple\gltf-draco\RiggedSimple0.bin" />
+    <None Include="2.0\riggedsimple\gltf\RiggedSimple0.bin" />
+    <None Include="2.0\scifihelmet\gltf\SciFiHelmet.bin" />
+    <None Include="2.0\sheenchair\gltf\SheenChair.bin" />
+    <None Include="2.0\sheencloth\gltf\SheenCloth.bin" />
+    <None Include="2.0\simplemeshes\gltf\triangle.bin" />
+    <None Include="2.0\simplemorph\gltf\simpleMorphAnimation.bin" />
+    <None Include="2.0\simplemorph\gltf\simpleMorphGeometry.bin" />
+    <None Include="2.0\simpleskin\gltf\inverseBindMatrices.bin" />
+    <None Include="2.0\simpleskin\gltf\skinAnimation.bin" />
+    <None Include="2.0\simpleskin\gltf\skinGeometry.bin" />
+    <None Include="2.0\simpleskin\gltf\skinningData.bin" />
+    <None Include="2.0\simplesparseaccessor\gltf\SimpleSparseAccessor.bin" />
+    <None Include="2.0\specglossvsmetalrough\gltf\SpecGlossVsMetalRoughLabel.bin" />
+    <None Include="2.0\specglossvsmetalrough\gltf\WaterBottle.bin" />
+    <None Include="2.0\speculartest\gltf\SpecularTest.bin" />
+    <None Include="2.0\sponza\gltf\Sponza.bin" />
+    <None Include="2.0\stainedglasslamp\gltf-jpg-png\StainedGlassLamp.bin" />
+    <None Include="2.0\stainedglasslamp\gltf-ktx-basisu\StainedGlassLamp.bin" />
+    <None Include="2.0\stainedglasslamp\gltf\StainedGlassLamp.bin" />
+    <None Include="2.0\suzanne\gltf\Suzanne.bin" />
+    <None Include="2.0\texturecoordinatetest\gltf\TextureCoordinateTest.bin" />
+    <None Include="2.0\textureencodingtest\gltf\Plane.bin" />
+    <None Include="2.0\textureencodingtest\gltf\Sphere.bin" />
+    <None Include="2.0\texturelinearinterpolationtest\gltf\Plane.bin" />
+    <None Include="2.0\texturelinearinterpolationtest\gltf\Sphere.bin" />
+    <None Include="2.0\texturesettingstest\gltf\TextureSettingsTest0.bin" />
+    <None Include="2.0\texturetransformmultitest\gltf\TextureTransformMultiTest.bin" />
+    <None Include="2.0\texturetransformtest\gltf\TextureTransformTest.bin" />
+    <None Include="2.0\toycar\gltf\ToyCar.bin" />
+    <None Include="2.0\transmissionroughnesstest\gltf\TransmissionRoughnessTest.bin" />
+    <None Include="2.0\transmissiontest\gltf\TransmissionTest_binary.bin" />
+    <None Include="2.0\trianglewithoutindices\gltf\triangleWithoutIndices.bin" />
+    <None Include="2.0\triangle\gltf\simpleTriangle.bin" />
+    <None Include="2.0\twosidedplane\gltf\TwoSidedPlane.bin" />
+    <None Include="2.0\unicode❤♻test\gltf\Unicode❤♻Binary.bin" />
+    <None Include="2.0\unlittest\gltf\UnlitTest.bin" />
+    <None Include="2.0\vc\gltf-draco\VC0.bin" />
+    <None Include="2.0\vc\gltf\VC0.bin" />
+    <None Include="2.0\vertexcolortest\gltf\VertexColorTest.bin" />
+    <None Include="2.0\waterbottle\gltf-draco\WaterBottle.bin" />
+    <None Include="2.0\waterbottle\gltf\WaterBottle.bin" />
+    <None Include="shader.frag" />
+    <None Include="shader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="boost_implementation.cpp" />
+    <ClCompile Include="externals\cJSON.c" />
+    <ClCompile Include="externals\cJSON_Utils.c" />
+    <ClCompile Include="externals\cwalk.c" />
+    <ClCompile Include="externals\gl.c" />
+    <ClCompile Include="externals\hashmap.c" />
+    <ClCompile Include="externals\stb_vorbis.c" />
+    <ClCompile Include="externals\wgl.c" />
+    <ClCompile Include="externals\xml.c" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="stb_implementation.c" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
