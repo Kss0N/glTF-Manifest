@@ -206,7 +206,7 @@ constexpr static uint32_t getComponentTypeByteSize(GLenum type)
 	}
 }
 
-path filepath = "2.0/BoxTextured/glTF/BoxTextured.gltf";
+path filepath = "2.0/BoxTexturedNonPowerOfTwo/glTF/BoxTexturedNonPowerOfTwo.gltf";
 
 int main()
 {
