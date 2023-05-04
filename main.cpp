@@ -69,12 +69,30 @@ struct Accessor
 	//todo min max and sparse
 };
 
+struct Image {
+	uint32_t x, y;
+	stbi_uc* image;
+	uint32_t channels;
+};
+struct Texture {
+	GLuint sampler;
+	GLuint tex;
+};
+struct TextureInfo 
+{
+	std::vector<Texture>::const_iterator tex;
+	uint32_t unit = 0;
+};
+
 struct Material 
 {
 	glm::vec4 baseColorFactor = { 1.f, 1.f, 1.f, 1.f };
 	float 
 		 metallicFactor = 1.f,
 		roughnessFactor = 1.f;
+	struct TextureInfo
+		baseColorTexture,
+		metallicRoughnessTexture;
 
 
 };
@@ -188,7 +206,7 @@ constexpr static uint32_t getComponentTypeByteSize(GLenum type)
 	}
 }
 
-path filepath = "2.0/Box/glTF/Box.gltf";
+path filepath = "2.0/BoxTextured/glTF/BoxTextured.gltf";
 
 int main()
 {
@@ -282,6 +300,25 @@ int main()
 		input.close();
 	}
 
+	auto samplers = std::vector<GLuint>(gltf["samplers"].as_array().size());
+	glCreateSamplers((GLsizei)samplers.size(), samplers.data());
+	for (uint32_t i = 0;  i < samplers.size(); i++)
+	{
+		auto jo = gltf["samplers"].as_array()[i].as_object();
+
+		if (!jo["name"].is_null())
+			glObjectLabel(GL_SAMPLER, samplers[i], -1, jo["name"].as_string().c_str());
+
+		if (!jo["magFilter"].is_null())
+			glSamplerParameteri(samplers[i], GL_TEXTURE_MAG_FILTER, jo["magFilter"].as_int64());
+		if (!jo["minFilter"].is_null())
+			glSamplerParameteri(samplers[i], GL_TEXTURE_MIN_FILTER, jo["minFilter"].as_int64());
+
+		glSamplerParameteri(samplers[i], GL_TEXTURE_WRAP_S, jo["wrapS"].is_null() ? GL_REPEAT : jo["wrapS"].as_int64());
+
+		glSamplerParameteri(samplers[i], GL_TEXTURE_WRAP_T, jo["wrapT"].is_null() ? GL_REPEAT : jo["wrapT"].as_int64());
+	}
+
 	auto bufferViews = std::vector<BufferView>(gltf["bufferViews"].as_array().size());
 	for (uint32_t i = 0; i < bufferViews.size(); i++)
 	{
@@ -332,6 +369,52 @@ int main()
 		//todo min max
 	}
 
+	auto images = std::vector <Image> (gltf["images"].as_array().size());
+	for (uint32_t i = 0; i < images.size(); i++)
+	{
+		auto jo = gltf["images"].as_array()[i].as_object();
+
+		auto uri = (std::string) jo["uri"].as_string();
+
+		int x, y, channels;
+		auto img = stbi_load((filepath.parent_path() / uri).string().c_str(), &x, &y, &channels, STBI_rgb_alpha);
+
+		images[i].channels = channels;
+		images[i].x = x;
+		images[i].y = y;
+		images[i].image = img;
+	}
+
+	auto textures = std::vector<Texture>(gltf["textures"].as_array().size());
+	for (uint32_t i = 0; i < textures.size(); i++)
+	{
+		auto jo = gltf["textures"].as_array()[i].as_object();
+
+		auto sampler = samplers[jo["sampler"].as_int64()];
+		
+		auto image = images[jo["source"].as_int64() ];
+		
+		GLuint tex;
+		glCreateTextures(GL_TEXTURE_2D, 1, &tex);
+		glTextureStorage2D(tex, 1, GL_RGBA8, image.x, image.y);
+		glBindTexture(GL_TEXTURE_2D, textures[i].tex);
+		glTextureSubImage2D(tex, 0, 0, 0, image.x, image.y, GL_RGBA, GL_UNSIGNED_BYTE, image.image);
+
+		textures[i] = Texture{.sampler = sampler, .tex = tex };
+	}
+
+	auto parseTextureInfo = [textures](json::object& o) -> TextureInfo
+	{
+		auto t = TextureInfo{
+			.tex = textures.begin() + o.at("index").as_int64(),
+		};
+		if (o.if_contains("texCoord"))
+			t.unit = o.at("texCoord").as_int64();
+		return t;
+	};
+
+
+
 	auto materials = std::vector<Material>(gltf["materials"].as_array().size());
 	for (uint32_t i = 0; i < materials.size(); i++)
 	{
@@ -353,6 +436,16 @@ int main()
 
 			if (!pbr["roughnessFactor"].is_null())
 				mat.roughnessFactor = (float)pbr["roughnessFactor"].as_double();
+
+			auto bct = pbr["baseColorTexture"];
+			auto mrt = pbr["metallicRoughnessTexture"];
+			
+			if (!bct.is_null())
+				mat.baseColorTexture = parseTextureInfo(bct.as_object());
+
+			if (!mrt.is_null())
+				mat.metallicRoughnessTexture = parseTextureInfo(mrt.as_object());
+
 
 		}
 
@@ -379,8 +472,8 @@ int main()
 			/// POSITION	| VEC3			| float
 			/// NORMAL		| VEC3			| float
 			/// TANGENT		| VEC3			| float
-			/// TEXCOORD_n	| VEC2			| float / (un)signed (byte / short)
-			/// COLOR_n		| VEC3 / VEC4	| float / (un)signed (byte / short)
+			/// TEXCOORD_n	| VEC2			| float / (un)signed normalized (byte / short)
+			/// COLOR_n		| VEC3 / VEC4	| float / (un)signed normalized (byte / short)
 			/// indices		| SCALAR		| unsigned (byte / short / int)
 			/// 
 			auto attribs = jop["attributes"].as_object();
@@ -417,6 +510,13 @@ int main()
 				linkAttribute(*a, ATTRIB_NORMAL);
 
 				count = std::max(count, a->count);
+			}
+			if (attribs.if_contains("TEXCOORD_0"))
+			{
+				auto a = accessors.begin() + attribs["TEXCOORD_0"].as_int64();
+
+
+				linkAttribute(*a, ATTRIB_TEX0);
 			}
 
 
@@ -534,7 +634,16 @@ int main()
 	}
 
 
+
+
 	auto scene = scenes.begin() + gltf["scene"].as_int64();
+
+
+	//
+	// Remove intermediates
+	//
+	for (const auto& img : images)
+		stbi_image_free(img.image);
 
 	//
 	// Rendering
@@ -671,9 +780,18 @@ int main()
 				for (uint32_t i = 0; i < mesh.primitives.size(); i++)
 				{
 					auto prim = mesh.primitives[i];
+					auto mat = prim.material;
 					auto vao = mesh.vaos[i];
 
-					glProgramUniform4fv(program, 0, 1, glm::value_ptr(prim.material->baseColorFactor));
+					if (mat._Ptr)
+					{
+						glProgramUniform4fv(program, 0, 1, glm::value_ptr(mat->baseColorFactor));
+
+						glActiveTexture(GL_TEXTURE0);
+						glBindSampler(mat->baseColorTexture.unit, mat->baseColorTexture.tex->sampler);
+						glBindTexture(GL_TEXTURE_2D, mat->baseColorTexture.tex->tex);
+					}
+					
 
 					glBindVertexArray(vao);
 
@@ -702,6 +820,10 @@ int main()
 	glDeleteBuffers(1, &matrixUBO);
 
 	glDeleteBuffers(buffers.size(), buffers.data());
+	glDeleteSamplers(samplers.size(), samplers.data());
+
+	for (const auto& m : meshes)
+		glDeleteVertexArrays(m.vaos.size(), m.vaos.data());
 
 
 	glfwDestroyWindow(window);
