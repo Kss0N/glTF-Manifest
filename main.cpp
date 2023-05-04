@@ -4,6 +4,7 @@
 #define BOOST_JSON_NO_LIB
 #define BOOST_CONTAINER_NO_LIB
 #include <boost/json.hpp>
+#include <boost/algorithm/string.hpp>
 
 #include <iostream>
 #include  <fstream>
@@ -206,7 +207,7 @@ constexpr static uint32_t getComponentTypeByteSize(GLenum type)
 	}
 }
 
-path filepath = "2.0/BoxTexturedNonPowerOfTwo/glTF/BoxTexturedNonPowerOfTwo.gltf";
+path filepath = "2.0/Box With Spaces/glTF/Box With Spaces.gltf";
 
 int main()
 {
@@ -279,7 +280,7 @@ int main()
 	// Parsing
 	//
 
-	auto buffers = std::vector<GLuint>(gltf["buffers"].as_array().size());
+	auto buffers = std::vector<GLuint>(gltf.if_contains("buffers") ?  gltf["buffers"].as_array().size() : 0);
 	glCreateBuffers((GLsizei)buffers.size(), buffers.data());
 	for (uint32_t i = 0; i < buffers.size(); i++)
 	{
@@ -300,9 +301,9 @@ int main()
 		input.close();
 	}
 
-	auto samplers = std::vector<GLuint>(gltf["samplers"].as_array().size());
+	auto samplers = std::vector<GLuint>((gltf.if_contains("samplers") ? gltf["samplers"].as_array().size() : 0) + 1);
 	glCreateSamplers((GLsizei)samplers.size(), samplers.data());
-	for (uint32_t i = 0;  i < samplers.size(); i++)
+	for (uint32_t i = 0;  i < samplers.size()-1; i++)
 	{
 		auto jo = gltf["samplers"].as_array()[i].as_object();
 
@@ -319,7 +320,15 @@ int main()
 		glSamplerParameteri(samplers[i], GL_TEXTURE_WRAP_T, jo["wrapT"].is_null() ? GL_REPEAT : jo["wrapT"].as_int64());
 	}
 
-	auto bufferViews = std::vector<BufferView>(gltf["bufferViews"].as_array().size());
+	//default sampler:
+	{
+		auto sampler = samplers[samplers.size() - 1];
+		glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glSamplerParameteri(sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+
+
+	auto bufferViews = std::vector<BufferView>(gltf.if_contains("bufferViews") ?  gltf["bufferViews"].as_array().size() : 0);
 	for (uint32_t i = 0; i < bufferViews.size(); i++)
 	{
 		auto jo = gltf["bufferViews"].as_array()[i].as_object();
@@ -344,7 +353,7 @@ int main()
 		
 	}
 
-	auto accessors = std::vector<Accessor>(gltf["accessors"].as_array().size());
+	auto accessors = std::vector<Accessor>(gltf.if_contains("accessors") ?  gltf["accessors"].as_array().size() : 0);
 	for (uint32_t i = 0; i < accessors.size(); i++)
 	{
 		auto jo = gltf["accessors"].as_array()[i].as_object();
@@ -369,15 +378,25 @@ int main()
 		//todo min max
 	}
 
-	auto images = std::vector <Image> (gltf["images"].as_array().size());
+	auto images = std::vector <Image> (gltf.if_contains("images") ? gltf["images"].as_array().size() : 0);
 	for (uint32_t i = 0; i < images.size(); i++)
 	{
 		auto jo = gltf["images"].as_array()[i].as_object();
 
 		auto uri = (std::string) jo["uri"].as_string();
 
+		auto p = (filepath.parent_path() / uri).string();
+		boost::algorithm::replace_all(p, "%20", " ");
+		
+
+		FILE* file = NULL;
+		fopen_s(&file, p.c_str(), "rb");
+		assert(file != NULL);
+
 		int x, y, channels;
-		auto img = stbi_load((filepath.parent_path() / uri).string().c_str(), &x, &y, &channels, STBI_rgb_alpha);
+		auto img = stbi_load_from_file(file, &x, &y, &channels, STBI_rgb_alpha);
+
+		fclose(file);
 
 		images[i].channels = channels;
 		images[i].x = x;
@@ -385,12 +404,12 @@ int main()
 		images[i].image = img;
 	}
 
-	auto textures = std::vector<Texture>(gltf["textures"].as_array().size());
+	auto textures = std::vector<Texture>(gltf.if_contains("textures") ? gltf["textures"].as_array().size() : 0);
 	for (uint32_t i = 0; i < textures.size(); i++)
 	{
 		auto jo = gltf["textures"].as_array()[i].as_object();
 
-		auto sampler = samplers[jo["sampler"].as_int64()];
+		auto sampler = jo.if_contains("sampler") ?  samplers[jo["sampler"].as_int64()] : samplers[samplers.size()-1];
 		
 		auto image = images[jo["source"].as_int64() ];
 		
@@ -415,7 +434,7 @@ int main()
 
 
 
-	auto materials = std::vector<Material>(gltf["materials"].as_array().size());
+	auto materials = std::vector<Material>(gltf.if_contains("materials") ? gltf["materials"].as_array().size() : 0);
 	for (uint32_t i = 0; i < materials.size(); i++)
 	{
 		auto jo = gltf["materials"].as_array()[i].as_object();
@@ -451,7 +470,7 @@ int main()
 
 	}
 
-	auto meshes = std::vector<Mesh>(gltf["meshes"].as_array().size());
+	auto meshes = std::vector<Mesh>(gltf.if_contains("meshes") ? gltf["meshes"].as_array().size() : 0);
 	for (uint32_t i = 0; i < meshes.size(); i++)
 	{
 		auto jom = gltf["meshes"].as_array()[i].as_object();
@@ -542,7 +561,7 @@ int main()
 
 	}
 
-	auto nodes = std::vector<Node>(gltf["nodes"].as_array().size());
+	auto nodes = std::vector<Node>(gltf.if_contains("nodes") ? gltf["nodes"].as_array().size() : 0);
 	for (uint32_t i = 0; i < nodes.size(); i++)
 	{
 		auto jo = gltf["nodes"].as_array()[i].as_object();
@@ -614,7 +633,7 @@ int main()
 
 	}
 
-	auto scenes = std::vector<Scene>(gltf["scenes"].as_array().size());
+	auto scenes = std::vector<Scene>(gltf.if_contains("scenes") ? gltf["scenes"].as_array().size() : 0);
 	for (uint32_t i = 0; i < scenes.size(); i++)
 	{
 		auto jo = gltf["scenes"].as_array()[i].as_object();
@@ -636,7 +655,7 @@ int main()
 
 
 
-	auto scene = scenes.begin() + gltf["scene"].as_int64();
+	auto scene = scenes.begin() + (gltf.if_contains("scene") ? gltf["scene"].as_int64() : 0);
 
 
 	//
