@@ -69,6 +69,16 @@ struct Accessor
 	//todo min max and sparse
 };
 
+struct Material 
+{
+	glm::vec4 baseColorFactor = { 1.f, 1.f, 1.f, 1.f };
+	float 
+		 metallicFactor = 1.f,
+		roughnessFactor = 1.f;
+
+
+};
+
 struct Mesh
 {
 	struct Primitive
@@ -76,6 +86,7 @@ struct Mesh
 		uint32_t count = 0; // vertex count
 
 		std::vector<Accessor>::const_iterator indices;
+		std::vector<Material>::const_iterator material;
 
 		GLenum mode = GL_TRIANGLES;
 	};
@@ -88,7 +99,7 @@ struct Node
 	//todo camera
 	std::vector<std::vector<Node>::const_iterator> children;
 	//todo skin
-	glm::mat4 matrix;
+	glm::mat4 matrix = glm::mat4(1.f);
 	std::vector<Mesh>::const_iterator mesh;
 	glm::quat rotation;
 	glm::vec3 scale;
@@ -321,6 +332,32 @@ int main()
 		//todo min max
 	}
 
+	auto materials = std::vector<Material>(gltf["materials"].as_array().size());
+	for (uint32_t i = 0; i < materials.size(); i++)
+	{
+		auto jo = gltf["materials"].as_array()[i].as_object();
+		
+
+		auto& mat = materials[i];
+		
+		if (!jo["pbrMetallicRoughness"].is_null())
+		{
+			auto pbr = jo["pbrMetallicRoughness"].as_object();
+
+			if (!pbr["baseColorFactor"].is_null()) 
+				for (uint32_t j = 0; j < glm::vec4::length(); j++) 
+					mat.baseColorFactor[j] = (float)pbr["baseColorFactor"].as_array()[j].as_double();
+
+			if (!pbr["metallicFactor"].is_null())
+				mat.metallicFactor = (float)pbr["metallicFactor"].as_double();
+
+			if (!pbr["roughnessFactor"].is_null())
+				mat.roughnessFactor = (float)pbr["roughnessFactor"].as_double();
+
+		}
+
+	}
+
 	auto meshes = std::vector<Mesh>(gltf["meshes"].as_array().size());
 	for (uint32_t i = 0; i < meshes.size(); i++)
 	{
@@ -371,6 +408,18 @@ int main()
 
 				count = std::max(count, a->count);
 			}
+			if (!attribs["NORMAL"].is_null())
+			{
+				auto a = accessors.begin() + attribs["NORMAL"].as_int64();
+
+				assert(a->type == "VEC3");
+				assert(a->componentType == GL_FLOAT);
+				linkAttribute(*a, ATTRIB_NORMAL);
+
+				count = std::max(count, a->count);
+			}
+
+
 
 			if (!jop["indices"].is_null())
 			{
@@ -378,6 +427,11 @@ int main()
 
 				prim.indices = a;
 				glVertexArrayElementBuffer(vao, a->bufferView->buffer);
+			}
+
+			if (!jop["material"].is_null())
+			{
+				prim.material = materials.begin() + jop["material"].as_int64();
 			}
 
 			prim.count = count;
@@ -601,7 +655,7 @@ int main()
 
 		std::function<void(std::vector<Node>::const_iterator, glm::mat4)> drawNodes;
 
-		drawNodes = [matrixUBO, &drawNodes](std::vector<Node>::const_iterator node, glm::mat4 mtx)
+		drawNodes = [matrixUBO, &drawNodes, program](std::vector<Node>::const_iterator node, glm::mat4 mtx)
 		{
 			glm::mat4
 				matrix = mtx * node->matrix, //todo
@@ -618,6 +672,8 @@ int main()
 				{
 					auto prim = mesh.primitives[i];
 					auto vao = mesh.vaos[i];
+
+					glProgramUniform4fv(program, 0, 1, glm::value_ptr(prim.material->baseColorFactor));
 
 					glBindVertexArray(vao);
 
