@@ -22,7 +22,7 @@ layout(binding = 0, std140) uniform MatrixBlock
 
 void main (void)
 {
-	gl_Position = vec4(aPos, 1.0);
+	gl_Position = u_projection * u_view * u_model * vec4(aPos, 1.0);
 
 	pos = vec3(u_model * vec4(aPos, 1.0));
 	normal = normalize(mat3(u_normal) * aNormal);

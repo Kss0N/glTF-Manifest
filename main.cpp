@@ -26,8 +26,12 @@
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
+#include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/vector_angle.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 namespace json{using namespace boost::json;}
 
@@ -71,11 +75,38 @@ struct Mesh
 	{
 		uint32_t count = 0; // vertex count
 
+		std::vector<Accessor>::const_iterator indices;
+
 		GLenum mode = GL_TRIANGLES;
 	};
 	std::vector<Primitive> primitives;
 	std::vector<GLuint> vaos;
 };
+
+struct Node 
+{
+	//todo camera
+	std::vector<std::vector<Node>::const_iterator> children;
+	//todo skin
+	glm::mat4 matrix;
+	std::vector<Mesh>::const_iterator mesh;
+	glm::quat rotation;
+	glm::vec3 scale;
+	glm::vec3 translation;
+	std::vector<float> weights;
+
+	static constexpr glm::quat DEFAULT_ROTATION = { 1.f, 0, 0, 0 };
+	static constexpr glm::vec3 DEFAULT_SCALE = { 1.f, 1.f, 1.f };
+	static constexpr glm::vec3 DEFAULT_TRANSLATION = { 0,0,0 };
+};
+
+struct Scene 
+{
+	std::vector<std::vector<Node>::const_iterator> nodes;
+};
+	
+	
+;
 
 
 static GLuint makeShader(GLenum type, const char* path)
@@ -123,7 +154,7 @@ static GLuint makeShader(GLenum type, const char* path)
 	return shader;
 }
 
-static uint32_t getAccessorTypeComponentCount(std::string type)
+constexpr static uint32_t getAccessorTypeComponentCount(std::string type)
 {
 	if (type == "SCALAR")	return 1;
 	if (type == "VEC2")		return 2;
@@ -132,8 +163,9 @@ static uint32_t getAccessorTypeComponentCount(std::string type)
 	if (type == "MAT2")		return 4;
 	if (type == "MAT3")		return 9;
 	if (type == "MAT4")		return 16;
+	return 0;
 }
-static uint32_t getComponentTypeByteSize(GLenum type)
+constexpr static uint32_t getComponentTypeByteSize(GLenum type)
 {
 	switch (type)
 	{
@@ -145,7 +177,7 @@ static uint32_t getComponentTypeByteSize(GLenum type)
 	}
 }
 
-path filepath = "2.0/TriangleWithoutIndices/glTF/TriangleWithoutIndices.gltf";
+path filepath = "2.0/Box/glTF/Box.gltf";
 
 int main()
 {
@@ -340,6 +372,13 @@ int main()
 				count = std::max(count, a->count);
 			}
 
+			if (!jop["indices"].is_null())
+			{
+				auto a = accessors.begin() + jop["indices"].as_int64();
+
+				prim.indices = a;
+				glVertexArrayElementBuffer(vao, a->bufferView->buffer);
+			}
 
 			prim.count = count;
 			prim.mode = jop["mode"].is_null() ? GL_TRIANGLES : jop["mode"].as_int64();
@@ -349,53 +388,253 @@ int main()
 
 	}
 
+	auto nodes = std::vector<Node>(gltf["nodes"].as_array().size());
+	for (uint32_t i = 0; i < nodes.size(); i++)
+	{
+		auto jo = gltf["nodes"].as_array()[i].as_object();
+		auto& n = nodes[i];
+		
+		if(!jo["children"].is_null())
+			n.children.resize(jo["children"].as_array().size());
+		for (uint32_t i = 0; i < n.children.size(); i++)
+			n.children[i] = nodes.begin() + jo["children"].as_array()[i].as_int64();
+
+		if (!jo["matrix"].is_null())
+		{
+			auto matrix = jo["matrix"].as_array();
+			assert(matrix.size() == 16);
+
+			for (uint32_t i = 0; i < matrix.size(); i++)
+			{
+				*(glm::value_ptr(n.matrix) + i) = (glm::f32)matrix[i].as_double();
+			}
+		}
+		else n.matrix = glm::mat4(1.f);
+
+		if (!jo["mesh"].is_null())
+			n.mesh = meshes.begin() + jo["mesh"].as_int64();
+
+		//n.roation = !jo["rotation"].is_null() ? Node::DEFAULT_ROTATION : 
+
+		if (jo["rotation"].is_null())
+			n.rotation = Node::DEFAULT_ROTATION;
+		else
+		{
+			auto vec = jo["rotation"].as_array();
+
+			n.rotation[0] = (float)vec[3].as_double();
+			n.rotation[1] = (float)vec[0].as_double();
+			n.rotation[2] = (float)vec[1].as_double();
+			n.rotation[3] = (float)vec[3].as_double();		
+		}
+
+
+		if (jo["scale"].is_null())
+			n.scale = Node::DEFAULT_SCALE;
+		else
+		{
+			auto vec = jo["rotation"].as_array();
+
+			n.scale[0] = (float)vec[0].as_double();
+			n.scale[1] = (float)vec[1].as_double();
+			n.scale[2] = (float)vec[2].as_double();
+		}
+
+
+		if (jo["translation"].is_null())
+			n.translation = Node::DEFAULT_TRANSLATION;
+		else
+		{
+			auto vec = jo["translation"].as_array();
+
+			n.translation[0] = (float)vec[0].as_double();
+			n.translation[1] = (float)vec[1].as_double();
+			n.translation[2] = (float)vec[2].as_double();
+		}
+
+		if (!jo["weights"].is_null())
+			n.weights = std::vector<float>(jo["weights"].as_array().size());
+		for (uint32_t i = 0; i < n.weights.size(); i++)
+			n.weights[i] = (float)jo["weights"].as_array()[i].as_double();
+
+
+	}
+
+	auto scenes = std::vector<Scene>(gltf["scenes"].as_array().size());
+	for (uint32_t i = 0; i < scenes.size(); i++)
+	{
+		auto jo = gltf["scenes"].as_array()[i].as_object();
+
+		auto& scene = scenes[i];
+		
+		if (!jo["nodes"].is_null())
+		{
+			auto ns = jo["nodes"].as_array();
+			scene.nodes.resize(ns.size());
+
+			for (uint32_t j = 0; j < ns.size(); j++)
+			{
+				scene.nodes[j] = nodes.begin() + ns[j].as_int64();
+			}
+		}
+	}
+
+
+	auto scene = scenes.begin() + gltf["scene"].as_int64();
 
 	//
 	// Rendering
 	//
 
 	glm::vec3
-		pos = { 0, 0, -1 },
+		pos = { 0, 0, -10 },
 		dir = { 0, 0, 1 },
 		up  = { 0, 1, 0 };
+	bool firstClick = true;
+	float speed = .1f;
+	float sensitivity = 100.f;
 	
-
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 	glfwShowWindow(window);
 	while (!glfwWindowShouldClose(window))
 	{
 		glfwPollEvents();
 
+		glfwGetFramebufferSize(window, (int*)& g_width, (int*)&g_height);
+
+#pragma region Input handling
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		{
+			pos += speed * dir;
+		}
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		{
+			pos += speed * -glm::normalize(glm::cross(dir, up));
+		}
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		{
+			pos += speed * -dir;
+		}
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		{
+			pos += speed * glm::normalize(glm::cross(dir, up));
+		}
+		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		{
+			pos += speed * up;
+		}
+		if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		{
+			pos += speed * -up;
+		}
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+		{
+			speed = 0.4f;
+		}
+		else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
+		{
+			speed = 0.1f;
+		}
+
+
+		// Handles mouse inputs
+		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+		{
+			// Hides mouse cursor
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+
+			// Prevents camera from jumping on the first click
+			if (firstClick)
+			{
+				glfwSetCursorPos(window, (g_width / 2), (g_height / 2));
+				firstClick = false;
+			}
+
+			// Stores the coordinates of the cursor
+			double mouseX;
+			double mouseY;
+			// Fetches the coordinates of the cursor
+			glfwGetCursorPos(window, &mouseX, &mouseY);
+
+			// Normalizes and shifts the coordinates of the cursor such that they begin in the middle of the screen
+			// and then "transforms" them into degrees 
+			float rotX = sensitivity * (float)(mouseY - (g_height / 2)) / g_height;
+			float rotY = sensitivity * (float)(mouseX - (g_width / 2)) / g_width;
+
+			// Calculates upcoming vertical change in the Orientation
+			glm::vec3 newOrientation = glm::rotate(dir, glm::radians(-rotX), glm::normalize(glm::cross(dir, up)));
+
+			// Decides whether or not the next vertical Orientation is legal or not
+			if (abs(glm::angle(newOrientation, up) - glm::radians(90.0f)) <= glm::radians(85.0f))
+			{
+				dir = newOrientation;
+			}
+
+			// Rotates the Orientation left and right
+			dir = glm::rotate(dir, glm::radians(-rotY), up);
+
+			// Sets mouse cursor to the middle of the screen so that it doesn't end up roaming around
+			glfwSetCursorPos(window, (g_width / 2), (g_height / 2));
+		}
+		else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_RELEASE)
+		{
+			// Unhides cursor since camera is not looking around anymore
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			// Makes sure the next time the camera looks around it doesn't jump
+			firstClick = true;
+		}
+#pragma endregion
+
+
 		glm::mat4
 			projection = glm::perspective(glm::radians(45.f), (float)g_width / g_height, .1f, 100.f),
-			view = glm::lookAt(pos, (pos + dir), up),
-			model = glm::mat4(1.f), //todo
-			normal = glm::inverse(glm::transpose(model));
+			view = glm::lookAt(pos, (pos + dir), up);
 
 		glNamedBufferSubData(matrixUBO, 0 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projection));
 		glNamedBufferSubData(matrixUBO, 1 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
-		glNamedBufferSubData(matrixUBO, 2 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(model));
-		glNamedBufferSubData(matrixUBO, 3 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(normal));
+		
 
 		glClearColor(0, 0, 0, 1);
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glViewport(0, 0, g_width, g_height);
 
-		
-		for (const auto& mesh : meshes)
+		std::function<void(std::vector<Node>::const_iterator, glm::mat4)> drawNodes;
+
+		drawNodes = [matrixUBO, &drawNodes](std::vector<Node>::const_iterator node, glm::mat4 mtx)
 		{
+			glm::mat4
+				matrix = mtx * node->matrix, //todo
+				normal = glm::inverse(glm::transpose(matrix));		
 
-			for (uint32_t i = 0; i < mesh.primitives.size(); i++)
+			if (node->mesh._Ptr != NULL)
 			{
-				auto prim = mesh.primitives[i];
-				auto vao = mesh.vaos[i];
+				glNamedBufferSubData(matrixUBO, 2 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(matrix)); //let the node's matrix eb the mesh's matrix
+				glNamedBufferSubData(matrixUBO, 3 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(normal));
 
-				glBindVertexArray(vao);
+				auto& mesh = *node->mesh;
 
-				glDrawArrays(prim.mode, 0, prim.count);
+				for (uint32_t i = 0; i < mesh.primitives.size(); i++)
+				{
+					auto prim = mesh.primitives[i];
+					auto vao = mesh.vaos[i];
+
+					glBindVertexArray(vao);
+
+					if (prim.indices._Ptr == NULL)
+						glDrawArrays(prim.mode, 0, prim.count);
+					else
+						glDrawElements(prim.mode, prim.indices->count, prim.indices->componentType, (void*)(prim.indices->bufferView->byteOffset + prim.indices->byteOffset));
+				}
 			}
-		}
-		
 
+			
+			for (const auto& c : node->children)
+				drawNodes(c, matrix);
+		};
+
+		for (const auto& n : scene->nodes)
+			drawNodes(n, glm::mat4(1.f));
 
 		glfwSwapBuffers(window);
 	}
