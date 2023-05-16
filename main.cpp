@@ -207,7 +207,7 @@ constexpr static uint32_t getComponentTypeByteSize(GLenum type)
 	}
 }
 
-path filepath = "2.0/Box With Spaces/glTF/Box With Spaces.gltf";
+path filepath = "2.0/Cube/glTF/Cube.gltf";
 
 int main()
 {
@@ -816,10 +816,18 @@ int main()
 					if (mat._Ptr)
 					{
 						glProgramUniform4fv(program, 0, 1, glm::value_ptr(mat->baseColorFactor));
+						glProgramUniform2fv(program, 1, 1, glm::value_ptr(glm::vec2(mat->metallicFactor, mat->roughnessFactor)));
 
-						glActiveTexture(GL_TEXTURE0);
-						glBindSampler(mat->baseColorTexture.unit, mat->baseColorTexture.tex->sampler);
+
+
+						glActiveTexture(GL_TEXTURE0 + 0);
+						glBindSampler(0, mat->baseColorTexture.tex->sampler);
 						glBindTexture(GL_TEXTURE_2D, mat->baseColorTexture.tex->tex);
+
+						glActiveTexture(GL_TEXTURE0 + 1);
+						glBindSampler(1, mat->metallicRoughnessTexture.tex->sampler);
+						glBindTexture(GL_TEXTURE_2D, mat->metallicRoughnessTexture.tex->tex);
+
 					}
 					
 

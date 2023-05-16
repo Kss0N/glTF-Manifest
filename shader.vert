@@ -6,9 +6,9 @@ layout(location = 2) in vec2 aTex0;
 
 layout(location = 0) out VData
 {
-	vec3 pos;
-	vec3 normal;
-	vec2 tex0;
+	vec3 Pos;
+	vec3 Normal;
+	vec2 Tex0;
 };
 
 layout(binding = 0, std140) uniform MatrixBlock
@@ -24,7 +24,7 @@ void main (void)
 {
 	gl_Position = u_projection * u_view * u_model * vec4(aPos, 1.0);
 
-	pos = vec3(u_model * vec4(aPos, 1.0));
-	normal = normalize(mat3(u_normal) * aNormal);
-	tex0 = aTex0;
+	Pos = vec3(u_model * vec4(aPos, 1.0));
+	Normal = normalize(mat3(u_normal) * aNormal);
+	Tex0 = aTex0;
 }
