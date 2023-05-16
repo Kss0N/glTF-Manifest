@@ -20,10 +20,18 @@ layout(location = 1, std140) uniform CameraLightBlock
 
 
 layout(location = 0) uniform vec4 u_baseColorFactor = vec4(1, 1, 1, 1);
-layout(location = 1) uniform vec2 u_metallicRoughnessFactor = vec2(1,1); //x := metallic Factor, y := roughness Factor
+layout(location = 1) uniform bool u_hasBaseColorTexture = false;
+
+layout(location = 2) uniform vec2 u_metallicRoughnessFactor = vec2(1,1); //x := metallic Factor, y := roughness Factor
+layout(location = 3) uniform bool u_hasMetallicRoughnessTexture = false;
+
+layout(location = 4) uniform vec3 u_normalScale = vec3(1,1,1);
+layout(location = 5) uniform bool u_hasNormalTexture = false;
 
 layout(binding = 0) uniform sampler2D baseColorTexture;
 layout(binding = 1) uniform sampler2D metallicRoughnessTexture;
+layout(binding = 2) uniform sampler2D normalTexture;
+
 
 /*
 BRDF:
@@ -102,8 +110,6 @@ vec3 diffuse_brdf(vec3 color)
 	return (1 / PI) * color;
 }
 
-
-
 vec3 conductor_fresnel(vec3 f0, float bsdf, float _1_minus_VdH_pow5 )
 {
 	return bsdf * (f0 + (1-f0) * _1_minus_VdH_pow5);
@@ -119,27 +125,30 @@ vec3 fresnel_mix(float ior, vec3 base, float layer, float _1_minus_VdH_pow5)
 	return mix(base, layer.xxx, fr);
 }
 
+
+
 void main(void)
 {
 
 	
 	vec3
+		  normal = u_hasNormalTexture ? u_normalScale * texture(normalTexture, Tex0).xyz : Normal,
 		 viewDir = normalize(camPos - Pos),
 		lightDir = normalize(lightPos - Pos),
 		 halfDir = normalize(viewDir + lightDir);
 	
 	dp.VdL = dot( viewDir, lightDir);
-	dp.VdN = dot( viewDir,   Normal);
+	dp.VdN = dot( viewDir,   normal);
 	dp.VdH = dot( viewDir,  halfDir);
-	dp.LdN = dot(lightDir,   Normal);
+	dp.LdN = dot(lightDir,   normal);
 	dp.LdN = dot(lightDir,  halfDir);
-	dp.LdN = dot(  Normal,  halfDir);
+	dp.LdN = dot(  normal,  halfDir);
 
 	vec4
-		baseColor = u_baseColorFactor * texture(baseColorTexture, Tex0);
+		baseColor = u_baseColorFactor * (u_hasBaseColorTexture ? texture(baseColorTexture, Tex0) : vec4(1,1,1,1)).xyzw;
 	float 
-		metallic = u_metallicRoughnessFactor.x * texture(metallicRoughnessTexture, Tex0).b,
-		roughness= u_metallicRoughnessFactor.y * texture(metallicRoughnessTexture, Tex0).g,
+		metallic = u_metallicRoughnessFactor.x * (u_hasMetallicRoughnessTexture ? texture(metallicRoughnessTexture, Tex0) : vec4(1,1,1,1)).b,
+		roughness= u_metallicRoughnessFactor.y * (u_hasMetallicRoughnessTexture ? texture(metallicRoughnessTexture, Tex0) : vec4(1,1,1,1)).g,
 
 		r2 = pow(roughness, 2),
 		spec = specular_brdf(r2),

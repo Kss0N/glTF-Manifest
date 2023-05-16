@@ -23,13 +23,16 @@
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
+#include <glm/common.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <glm/vec4.hpp>
 #include <glm/mat4x4.hpp>
+
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtx/string_cast.hpp>
@@ -88,12 +91,18 @@ struct TextureInfo
 struct Material 
 {
 	glm::vec4 baseColorFactor = { 1.f, 1.f, 1.f, 1.f };
+	glm::vec3 normalScale = { 1.0f, 1.0f, 1.0f };
+
 	float 
 		 metallicFactor = 1.f,
 		roughnessFactor = 1.f;
 	struct TextureInfo
 		baseColorTexture,
-		metallicRoughnessTexture;
+		metallicRoughnessTexture,
+		normalTexture
+		
+		;
+
 
 
 };
@@ -137,6 +146,11 @@ struct Scene
 	
 	
 ;
+
+static float getFloat(json::value v)
+{
+	return (float)(v.is_double() ? v.as_double() : v.as_int64());
+}
 
 
 static GLuint makeShader(GLenum type, const char* path)
@@ -193,7 +207,7 @@ constexpr static uint32_t getAccessorTypeComponentCount(std::string type)
 	if (type == "MAT2")		return 4;
 	if (type == "MAT3")		return 9;
 	if (type == "MAT4")		return 16;
-	return 0;
+	else return 0;
 }
 constexpr static uint32_t getComponentTypeByteSize(GLenum type)
 {
@@ -207,7 +221,7 @@ constexpr static uint32_t getComponentTypeByteSize(GLenum type)
 	}
 }
 
-path filepath = "2.0/Cube/glTF/Cube.gltf";
+path filepath = "2.0/WaterBottle/glTF/WaterBottle.gltf";
 
 int main()
 {
@@ -286,7 +300,17 @@ int main()
 	// Parsing
 	//
 
-	auto buffers = std::vector<GLuint>(gltf.if_contains("buffers") ?  gltf["buffers"].as_array().size() : 0);
+	auto accessors	= std::vector<Accessor>	 (gltf.if_contains("accessors") ? gltf["accessors"].as_array().size() : 0);
+	auto buffers	= std::vector<GLuint>	 (gltf.if_contains("buffers") ?  gltf["buffers"].as_array().size() : 0);
+	auto bufferViews= std::vector<BufferView>(gltf.if_contains("bufferViews") ? gltf["bufferViews"].as_array().size() : 0);
+	auto images		= std::vector <Image>	 (gltf.if_contains("images") ? gltf["images"].as_array().size() : 0);
+	auto textures	= std::vector<Texture>	 (gltf.if_contains("textures") ? gltf["textures"].as_array().size() : 0);
+	auto materials	= std::vector<Material>	 (gltf.if_contains("materials") ? gltf["materials"].as_array().size() : 0);
+	auto meshes		= std::vector<Mesh>		 (gltf.if_contains("meshes") ? gltf["meshes"].as_array().size() : 0);
+	auto nodes		= std::vector<Node>		 (gltf.if_contains("nodes") ? gltf["nodes"].as_array().size() : 0);
+	auto samplers	= std::vector<GLuint>	 ((gltf.if_contains("samplers") ? gltf["samplers"].as_array().size() : 0) + 1);
+	auto scenes		= std::vector<Scene>	 (gltf.if_contains("scenes") ? gltf["scenes"].as_array().size() : 0);
+
 	glCreateBuffers((GLsizei)buffers.size(), buffers.data());
 	for (uint32_t i = 0; i < buffers.size(); i++)
 	{
@@ -307,7 +331,6 @@ int main()
 		input.close();
 	}
 
-	auto samplers = std::vector<GLuint>((gltf.if_contains("samplers") ? gltf["samplers"].as_array().size() : 0) + 1);
 	glCreateSamplers((GLsizei)samplers.size(), samplers.data());
 	for (uint32_t i = 0;  i < samplers.size()-1; i++)
 	{
@@ -334,7 +357,6 @@ int main()
 	}
 
 
-	auto bufferViews = std::vector<BufferView>(gltf.if_contains("bufferViews") ?  gltf["bufferViews"].as_array().size() : 0);
 	for (uint32_t i = 0; i < bufferViews.size(); i++)
 	{
 		auto jo = gltf["bufferViews"].as_array()[i].as_object();
@@ -359,7 +381,6 @@ int main()
 		
 	}
 
-	auto accessors = std::vector<Accessor>(gltf.if_contains("accessors") ?  gltf["accessors"].as_array().size() : 0);
 	for (uint32_t i = 0; i < accessors.size(); i++)
 	{
 		auto jo = gltf["accessors"].as_array()[i].as_object();
@@ -384,7 +405,6 @@ int main()
 		//todo min max
 	}
 
-	auto images = std::vector <Image> (gltf.if_contains("images") ? gltf["images"].as_array().size() : 0);
 	for (uint32_t i = 0; i < images.size(); i++)
 	{
 		auto jo = gltf["images"].as_array()[i].as_object();
@@ -410,7 +430,6 @@ int main()
 		images[i].image = img;
 	}
 
-	auto textures = std::vector<Texture>(gltf.if_contains("textures") ? gltf["textures"].as_array().size() : 0);
 	for (uint32_t i = 0; i < textures.size(); i++)
 	{
 		auto jo = gltf["textures"].as_array()[i].as_object();
@@ -438,9 +457,6 @@ int main()
 		return t;
 	};
 
-
-
-	auto materials = std::vector<Material>(gltf.if_contains("materials") ? gltf["materials"].as_array().size() : 0);
 	for (uint32_t i = 0; i < materials.size(); i++)
 	{
 		auto jo = gltf["materials"].as_array()[i].as_object();
@@ -452,15 +468,18 @@ int main()
 		{
 			auto pbr = jo["pbrMetallicRoughness"].as_object();
 
-			if (!pbr["baseColorFactor"].is_null()) 
-				for (uint32_t j = 0; j < glm::vec4::length(); j++) 
-					mat.baseColorFactor[j] = (float)pbr["baseColorFactor"].as_array()[j].as_double();
+			if (pbr.if_contains("baseColorFactor"))
+			{
+				auto arr = pbr["baseColorFactor"].as_array();
+				for (uint32_t j = 0; j < glm::vec4::length(); j++)
+					mat.baseColorFactor[j] = getFloat(arr[j]);
+			}				
 
 			if (!pbr["metallicFactor"].is_null())
-				mat.metallicFactor = (float)pbr["metallicFactor"].as_double();
+				mat.metallicFactor = getFloat(pbr["metallicFactor"]);
 
 			if (!pbr["roughnessFactor"].is_null())
-				mat.roughnessFactor = (float)pbr["roughnessFactor"].as_double();
+				mat.roughnessFactor = getFloat(pbr["roughnessFactor"]);
 
 			auto bct = pbr["baseColorTexture"];
 			auto mrt = pbr["metallicRoughnessTexture"];
@@ -474,9 +493,21 @@ int main()
 
 		}
 
+		if (jo.if_contains("normalTexture"))
+		{
+			auto nt = jo["normalTexture"].as_object();
+
+			mat.normalTexture = parseTextureInfo(nt);
+
+			if (nt.if_contains("scale"))
+			{
+				for (uint32_t j = 0; j < glm::vec3::length(); j++)
+					mat.normalScale[j] = getFloat(nt["scale"].as_array()[j]);
+			}
+		}
+
 	}
 
-	auto meshes = std::vector<Mesh>(gltf.if_contains("meshes") ? gltf["meshes"].as_array().size() : 0);
 	for (uint32_t i = 0; i < meshes.size(); i++)
 	{
 		auto jom = gltf["meshes"].as_array()[i].as_object();
@@ -507,10 +538,10 @@ int main()
 			{
 				auto stride = a.bufferView->byteStride != 0 ? a.bufferView->byteStride : getAccessorTypeComponentCount(a.type) * getComponentTypeByteSize(a.componentType);
 
-				glVertexArrayVertexBuffer (vao, location, a.bufferView->buffer, a.bufferView->byteOffset,  stride);
+				glVertexArrayVertexBuffer (vao, location, a.bufferView->buffer, a.bufferView->byteOffset + a.byteOffset,  stride);
 				glEnableVertexArrayAttrib (vao, location);
 				glVertexArrayAttribBinding(vao, location, location); //I feel like this is wrong but I don't know why
-				glVertexArrayAttribFormat (vao, location, getAccessorTypeComponentCount(a.type), a.componentType, a.normalized, a.byteOffset);
+				glVertexArrayAttribFormat (vao, location, getAccessorTypeComponentCount(a.type), a.componentType, a.normalized, 0);
 			};
 
 			uint32_t count = 0;
@@ -567,7 +598,6 @@ int main()
 
 	}
 
-	auto nodes = std::vector<Node>(gltf.if_contains("nodes") ? gltf["nodes"].as_array().size() : 0);
 	for (uint32_t i = 0; i < nodes.size(); i++)
 	{
 		auto jo = gltf["nodes"].as_array()[i].as_object();
@@ -585,7 +615,7 @@ int main()
 
 			for (uint32_t i = 0; i < matrix.size(); i++)
 			{
-				*(glm::value_ptr(n.matrix) + i) = (glm::f32)matrix[i].as_double();
+				*(glm::value_ptr(n.matrix) + i) = getFloat(matrix[i]);
 			}
 		}
 		else n.matrix = glm::mat4(1.f);
@@ -593,18 +623,16 @@ int main()
 		if (!jo["mesh"].is_null())
 			n.mesh = meshes.begin() + jo["mesh"].as_int64();
 
-		//n.roation = !jo["rotation"].is_null() ? Node::DEFAULT_ROTATION : 
-
 		if (jo["rotation"].is_null())
 			n.rotation = Node::DEFAULT_ROTATION;
 		else
 		{
 			auto vec = jo["rotation"].as_array();
 
-			n.rotation[0] = (float)vec[3].as_double();
-			n.rotation[1] = (float)vec[0].as_double();
-			n.rotation[2] = (float)vec[1].as_double();
-			n.rotation[3] = (float)vec[3].as_double();		
+			n.rotation[0] = getFloat(vec[3]);
+			n.rotation[1] = getFloat(vec[0]);
+			n.rotation[2] = getFloat(vec[1]);
+			n.rotation[3] = getFloat(vec[2]);
 		}
 
 
@@ -612,11 +640,11 @@ int main()
 			n.scale = Node::DEFAULT_SCALE;
 		else
 		{
-			auto vec = jo["rotation"].as_array();
+			auto vec = jo["scale"].as_array();
 
-			n.scale[0] = (float)vec[0].as_double();
-			n.scale[1] = (float)vec[1].as_double();
-			n.scale[2] = (float)vec[2].as_double();
+			n.scale[0] = getFloat(vec[0]);
+			n.scale[1] = getFloat(vec[1]);
+			n.scale[2] = getFloat(vec[2]);
 		}
 
 
@@ -626,20 +654,25 @@ int main()
 		{
 			auto vec = jo["translation"].as_array();
 
-			n.translation[0] = (float)vec[0].as_double();
-			n.translation[1] = (float)vec[1].as_double();
-			n.translation[2] = (float)vec[2].as_double();
+			n.translation[0] = getFloat(vec[0]);
+			n.translation[1] = getFloat(vec[1]);
+			n.translation[2] = getFloat(vec[2]);
 		}
+
+		if (jo.if_contains("matrix"))
+		{
+			n.matrix = glm::translate(n.translation) * glm::toMat4(n.rotation) * glm::scale(n.scale);
+		}
+
 
 		if (!jo["weights"].is_null())
 			n.weights = std::vector<float>(jo["weights"].as_array().size());
 		for (uint32_t i = 0; i < n.weights.size(); i++)
-			n.weights[i] = (float)jo["weights"].as_array()[i].as_double();
+			n.weights[i] = getFloat(jo["weights"].as_array()[i]);
 
 
 	}
 
-	auto scenes = std::vector<Scene>(gltf.if_contains("scenes") ? gltf["scenes"].as_array().size() : 0);
 	for (uint32_t i = 0; i < scenes.size(); i++)
 	{
 		auto jo = gltf["scenes"].as_array()[i].as_object();
@@ -816,17 +849,32 @@ int main()
 					if (mat._Ptr)
 					{
 						glProgramUniform4fv(program, 0, 1, glm::value_ptr(mat->baseColorFactor));
-						glProgramUniform2fv(program, 1, 1, glm::value_ptr(glm::vec2(mat->metallicFactor, mat->roughnessFactor)));
+						glProgramUniform1i (program, 1, mat->baseColorTexture.tex._Ptr != NULL);
+						if (mat->baseColorTexture.tex._Ptr)
+						{
+							glActiveTexture(GL_TEXTURE0 + 0);
+							glBindSampler(0, mat->baseColorTexture.tex->sampler);
+							glBindTexture(GL_TEXTURE_2D, mat->baseColorTexture.tex->tex);
+						}
 
+						glProgramUniform2fv(program, 2, 1, glm::value_ptr(glm::vec2(mat->metallicFactor, mat->roughnessFactor)));
+						glProgramUniform1i (program, 3, mat->metallicRoughnessTexture.tex._Ptr != NULL);						
+						if (mat->metallicRoughnessTexture.tex._Ptr)
+						{
+							glActiveTexture(GL_TEXTURE0 + 1);
+							glBindSampler(1, mat->metallicRoughnessTexture.tex->sampler);
+							glBindTexture(GL_TEXTURE_2D, mat->metallicRoughnessTexture.tex->tex);
+						}
 
+						glProgramUniform3fv(program, 4, 1, glm::value_ptr(mat->normalScale));
+						glProgramUniform1i (program, 5, mat->normalTexture.tex._Ptr != NULL);
+						if (mat->normalTexture.tex._Ptr)
+						{
+							glActiveTexture(GL_TEXTURE0 + 2);
+							glBindSampler(2, mat->normalTexture.tex->sampler);
+							glBindTexture(GL_TEXTURE_2D, mat->normalTexture.tex->tex);
+						}
 
-						glActiveTexture(GL_TEXTURE0 + 0);
-						glBindSampler(0, mat->baseColorTexture.tex->sampler);
-						glBindTexture(GL_TEXTURE_2D, mat->baseColorTexture.tex->tex);
-
-						glActiveTexture(GL_TEXTURE0 + 1);
-						glBindSampler(1, mat->metallicRoughnessTexture.tex->sampler);
-						glBindTexture(GL_TEXTURE_2D, mat->metallicRoughnessTexture.tex->tex);
 
 					}
 					
@@ -846,7 +894,10 @@ int main()
 		};
 
 		for (const auto& n : scene->nodes)
-			drawNodes(n, glm::mat4(1.f));
+			drawNodes(n, 
+				glm::mat4(1)
+
+				);
 
 		glfwSwapBuffers(window);
 	}
@@ -856,6 +907,7 @@ int main()
 	//
 
 	glDeleteBuffers(1, &matrixUBO);
+	glDeleteBuffers(1, &camLightUBO);
 
 	glDeleteBuffers(buffers.size(), buffers.data());
 	glDeleteSamplers(samplers.size(), samplers.data());
