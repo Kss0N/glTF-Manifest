@@ -291,6 +291,7 @@
     <None Include="2.0\vertexcolortest\gltf\VertexColorTest.bin" />
     <None Include="2.0\waterbottle\gltf-draco\WaterBottle.bin" />
     <None Include="2.0\waterbottle\gltf\WaterBottle.bin" />
+    <None Include="pbr.frag" />
     <None Include="shader.frag" />
     <None Include="shader.vert" />
   </ItemGroup>

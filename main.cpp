@@ -233,7 +233,7 @@ int main()
 	{
 		GLuint
 			vShader = makeShader(GL_VERTEX_SHADER, "shader.vert"),
-			fShader = makeShader(GL_FRAGMENT_SHADER, "shader.frag");
+			fShader = makeShader(GL_FRAGMENT_SHADER, "pbr.frag");
 
 		assert(vShader != 0);
 		assert(fShader != 0);
@@ -255,6 +255,12 @@ int main()
 	glCreateBuffers(1, &matrixUBO);
 	glNamedBufferData(matrixUBO, 4 * sizeof(glm::mat4), NULL, GL_DYNAMIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 0, matrixUBO);
+
+	GLuint camLightUBO;
+	glCreateBuffers(1, &camLightUBO);
+	glNamedBufferData(camLightUBO, 3 * sizeof(glm::vec4), NULL, GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 1, camLightUBO);
+
 
 	//
 	// Reading
@@ -668,6 +674,9 @@ int main()
 	// Rendering
 	//
 
+	glm::vec3 lightPos = { 0, 10, 0 };
+	glm::vec4 lightColor = { 1, 1, 1, 1 };
+
 	glm::vec3
 		pos = { 0, 0, -10 },
 		dir = { 0, 0, 1 },
@@ -678,6 +687,8 @@ int main()
 	
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
+	glNamedBufferSubData(camLightUBO, 1 * sizeof(glm::vec4), sizeof(glm::vec3), glm::value_ptr(lightPos));
+	glNamedBufferSubData(camLightUBO, 2 * sizeof(glm::vec4), sizeof(glm::vec4), glm::value_ptr(lightColor));
 	glfwShowWindow(window);
 	while (!glfwWindowShouldClose(window))
 	{
@@ -775,6 +786,7 @@ int main()
 
 		glNamedBufferSubData(matrixUBO, 0 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(projection));
 		glNamedBufferSubData(matrixUBO, 1 * sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+		glNamedBufferSubData(camLightUBO, 0, sizeof(glm::vec3), glm::value_ptr(pos));
 		
 
 		glClearColor(0, 0, 0, 1);
@@ -782,7 +794,6 @@ int main()
 		glViewport(0, 0, g_width, g_height);
 
 		std::function<void(std::vector<Node>::const_iterator, glm::mat4)> drawNodes;
-
 		drawNodes = [matrixUBO, &drawNodes, program](std::vector<Node>::const_iterator node, glm::mat4 mtx)
 		{
 			glm::mat4

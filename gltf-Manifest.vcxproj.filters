@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
+    <Filter Include="Source Files\external">
+      <UniqueIdentifier>{66ab9f31-dfaa-4090-8672-64a2c393c90a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\implementation">
+      <UniqueIdentifier>{8a39cb7a-92d8-4e70-97e0-9cc6f7878595}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="1.0\2cylinderengine\gltf\2CylinderEngine.bin">
@@ -513,5 +519,43 @@
     <None Include="2.0\waterbottle\gltf-draco\WaterBottle.bin">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="shader.frag" />
+    <None Include="shader.vert" />
+    <None Include="pbr.frag" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\cJSON.c">
+      <Filter>Source Files\external</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\cJSON_Utils.c">
+      <Filter>Source Files\external</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\cwalk.c">
+      <Filter>Source Files\external</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\gl.c">
+      <Filter>Source Files\external</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\hashmap.c">
+      <Filter>Source Files\external</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\stb_vorbis.c">
+      <Filter>Source Files\external</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\wgl.c">
+      <Filter>Source Files\external</Filter>
+    </ClCompile>
+    <ClCompile Include="externals\xml.c">
+      <Filter>Source Files\external</Filter>
+    </ClCompile>
+    <ClCompile Include="boost_implementation.cpp">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
+    <ClCompile Include="stb_implementation.c">
+      <Filter>Source Files\implementation</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
