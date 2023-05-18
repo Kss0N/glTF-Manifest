@@ -73,6 +73,28 @@ struct Accessor
 	//todo min max and sparse
 };
 
+struct Node;
+
+struct Animation 
+{
+	struct Sampler {
+		std::vector<Accessor>::const_iterator
+			input, output;
+		std::string interpolation;
+	};
+	struct Channel {
+		std::vector<Animation::Sampler>::const_iterator sampler;
+		std::vector<Node>::const_iterator node;
+		std::string path;
+	};
+
+	std::vector<Animation::Channel> channels;
+	std::vector<Animation::Sampler> samplers;
+	
+
+	std::string name;
+};
+
 struct Image {
 	uint32_t x, y;
 	stbi_uc* image;
@@ -90,17 +112,52 @@ struct TextureInfo
 
 struct Material 
 {
+	bool unlit = false;
+
 	glm::vec4 baseColorFactor = { 1.f, 1.f, 1.f, 1.f };
-	glm::vec3 normalScale = { 1.0f, 1.0f, 1.0f };
+
+	glm::vec3
+		attenuationColor = { 1,1,1 },
+		normalScale = { 1.0f, 1.0f, 1.0f },
+		clearcoatNormalScale = { 1, 1, 1 },
+		sheenColorFactor = { 0,0,0 },
+		specularColorFactor = { 1,1,1 }
+	
+	;
 
 	float 
+		attenuationDistance = INFINITY,
+		clearcoatFactor = 0.0,
+		clearcoatRoughnessFactor = 0.0,
+		emissiveStrength = 1.0,
+		ior = 1.5,
+		iridescenceFactor = 0.0,
+		iridescenceIor = 1.3,
+		iridescenceThicknessMinimum = 100.0,
+		iridescenceThicknessMaximum = 400.0,
 		 metallicFactor = 1.f,
-		roughnessFactor = 1.f;
+		roughnessFactor = 1.f,
+		sheenRoughnessFactor = 0.0,
+		specularFactor = 0.0,
+		thicknessFactor = 0,
+		transmissionFactor = 0.0
+		;
+
 	struct TextureInfo
 		baseColorTexture,
+		clearcoatTexture,
+		clearcoatRoughnessTexture,
+		emissiveTexture,
+		iridescenceTexture,
+		iridescenceThicknessTexture,
 		metallicRoughnessTexture,
-		normalTexture
-		
+		normalTexture,
+		occlusionTexture,
+		sheenColorTexture,
+		specularColorTexture,
+		specularTexture,
+		thicknessTexture,
+		transmissionTexture
 		;
 
 
@@ -221,7 +278,7 @@ constexpr static uint32_t getComponentTypeByteSize(GLenum type)
 	}
 }
 
-path filepath = "2.0/WaterBottle/glTF/WaterBottle.gltf";
+path filepath = "2.0/AnimatedCube/glTF/AnimatedCube.gltf";
 
 int main()
 {
@@ -300,16 +357,18 @@ int main()
 	// Parsing
 	//
 
-	auto accessors	= std::vector<Accessor>	 (gltf.if_contains("accessors") ? gltf["accessors"].as_array().size() : 0);
-	auto buffers	= std::vector<GLuint>	 (gltf.if_contains("buffers") ?  gltf["buffers"].as_array().size() : 0);
-	auto bufferViews= std::vector<BufferView>(gltf.if_contains("bufferViews") ? gltf["bufferViews"].as_array().size() : 0);
-	auto images		= std::vector <Image>	 (gltf.if_contains("images") ? gltf["images"].as_array().size() : 0);
-	auto textures	= std::vector<Texture>	 (gltf.if_contains("textures") ? gltf["textures"].as_array().size() : 0);
-	auto materials	= std::vector<Material>	 (gltf.if_contains("materials") ? gltf["materials"].as_array().size() : 0);
-	auto meshes		= std::vector<Mesh>		 (gltf.if_contains("meshes") ? gltf["meshes"].as_array().size() : 0);
-	auto nodes		= std::vector<Node>		 (gltf.if_contains("nodes") ? gltf["nodes"].as_array().size() : 0);
-	auto samplers	= std::vector<GLuint>	 ((gltf.if_contains("samplers") ? gltf["samplers"].as_array().size() : 0) + 1);
-	auto scenes		= std::vector<Scene>	 (gltf.if_contains("scenes") ? gltf["scenes"].as_array().size() : 0);
+	auto accessors	= std::vector<Accessor>	 (gltf.if_contains("accessors")  ? gltf["accessors"]	.as_array().size() : 0);
+	auto animations = std::vector<Animation> (gltf.if_contains("animations") ? gltf["animations"]	.as_array().size() : 0);
+	auto buffers	= std::vector<GLuint>	 (gltf.if_contains("buffers")	 ? gltf["buffers"]		.as_array().size() : 0);
+	auto bufferViews= std::vector<BufferView>(gltf.if_contains("bufferViews")? gltf["bufferViews"]	.as_array().size() : 0);
+	auto images		= std::vector <Image>	 (gltf.if_contains("images")	 ? gltf["images"]		.as_array().size() : 0);
+	auto materials	= std::vector<Material>	 (gltf.if_contains("materials")  ? gltf["materials"]	.as_array().size() : 0);
+	auto meshes		= std::vector<Mesh>		 (gltf.if_contains("meshes")	 ? gltf["meshes"]		.as_array().size() : 0);
+	auto nodes		= std::vector<Node>		 (gltf.if_contains("nodes")		 ? gltf["nodes"]		.as_array().size() : 0);
+	auto samplers	= std::vector<GLuint>	 (gltf.if_contains("samplers")	 ? gltf["samplers"]		.as_array().size() : 0);
+	auto scenes		= std::vector<Scene>	 (gltf.if_contains("scenes")	 ? gltf["scenes"]		.as_array().size() : 0);
+	auto textures	= std::vector<Texture>	 (gltf.if_contains("textures")	 ? gltf["textures"]		.as_array().size() : 0);
+
 
 	glCreateBuffers((GLsizei)buffers.size(), buffers.data());
 	for (uint32_t i = 0; i < buffers.size(); i++)
@@ -332,7 +391,7 @@ int main()
 	}
 
 	glCreateSamplers((GLsizei)samplers.size(), samplers.data());
-	for (uint32_t i = 0;  i < samplers.size()-1; i++)
+	for (uint32_t i = 0;  i < samplers.size(); i++)
 	{
 		auto jo = gltf["samplers"].as_array()[i].as_object();
 
@@ -351,11 +410,22 @@ int main()
 
 	//default sampler:
 	{
-		auto sampler = samplers[samplers.size() - 1];
+		GLuint sampler;
+		glCreateSamplers(1, &sampler);
 		glSamplerParameteri(sampler, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glSamplerParameteri(sampler, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		samplers.push_back(sampler);
 	}
 
+	auto parseTextureInfo = [&textures](json::object& o) -> TextureInfo
+	{
+		auto t = TextureInfo{
+			.tex = textures.begin() + o.at("index").as_int64(),
+		};
+		if (o.if_contains("texCoord"))
+			t.unit = o.at("texCoord").as_int64();
+		return t;
+	};
 
 	for (uint32_t i = 0; i < bufferViews.size(); i++)
 	{
@@ -446,16 +516,6 @@ int main()
 
 		textures[i] = Texture{.sampler = sampler, .tex = tex };
 	}
-
-	auto parseTextureInfo = [textures](json::object& o) -> TextureInfo
-	{
-		auto t = TextureInfo{
-			.tex = textures.begin() + o.at("index").as_int64(),
-		};
-		if (o.if_contains("texCoord"))
-			t.unit = o.at("texCoord").as_int64();
-		return t;
-	};
 
 	for (uint32_t i = 0; i < materials.size(); i++)
 	{
@@ -691,6 +751,46 @@ int main()
 		}
 	}
 
+	for (uint32_t i = 0; i < animations.size(); i++)
+	{
+		auto jo = gltf["animations"].as_array()[i].as_object();
+
+		auto& a = animations[i];
+		if (jo.if_contains("name"))
+			a.name = (std::string)jo["name"].as_string();
+
+		auto joss = jo["samplers"].as_array();
+		a.samplers.resize(joss.size());
+		for (uint32_t j = 0; j < a.samplers.size(); j++)
+		{
+			auto& s = a.samplers[j];
+			auto jos = joss[j].as_object();
+
+			s.input  = accessors.begin() + jos["input"].as_int64();
+			s.output = accessors.begin() + jos["output"].as_int64();
+			s.interpolation = (std::string)jos["interpolation"].as_string();
+		}
+
+		auto jocs = jo["channels"].as_array();
+		a.channels.resize(jocs.size());
+		for (uint32_t j = 0; j < a.channels.size(); j++)
+		{
+			auto joc = jocs[j].as_object();
+			auto c = a.channels[j];
+
+			c.sampler = a.samplers.begin() + joc["sampler"].as_int64();
+
+			if (joc.if_contains("target"))
+			{
+				auto jot = joc["target"].as_object();
+
+				c.node = nodes.begin() + jot["node"].as_int64();
+				c.path = (std::string)jot["path"].as_string();
+			}
+		}
+
+	}
+
 
 
 
@@ -874,9 +974,19 @@ int main()
 							glBindSampler(2, mat->normalTexture.tex->sampler);
 							glBindTexture(GL_TEXTURE_2D, mat->normalTexture.tex->tex);
 						}
-
-
 					}
+					else // To not screw up the rendering when no material at all is present
+					{
+						glProgramUniform4fv(program, 0, 1, glm::value_ptr(glm::vec4(1, 1, 1, 1)));
+						glProgramUniform1i (program, 1, false);
+
+						glProgramUniform2fv(program, 2, 1, glm::value_ptr(glm::vec2(1,1)));
+						glProgramUniform1i (program, 3, false);
+
+						glProgramUniform3fv(program, 4, 1, glm::value_ptr(glm::vec3(1,1,1)));
+						glProgramUniform1i (program, 5, false);
+					}
+
 					
 
 					glBindVertexArray(vao);
