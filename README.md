@@ -1,6 +1,14 @@
 <p align="center">
 <img src="2.0/glTF_RGB_June16.svg" height="100">
+
 </p>
+
+# glTF-Manifest
+
+This is a program for viewing glTF sample assets. It is written in C++ using OpenGL.
+
+![Sponza Screenshot](Sponza-screenshot.png)
+
 
 # glTF Sample Models
 
