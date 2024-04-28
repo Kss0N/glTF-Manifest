@@ -17,7 +17,7 @@
 #include <stb_include.h>
 #include <stb_image.h>
 
-
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glad/gl.h>
 
 #include <GLFW/glfw3.h>
@@ -50,6 +50,8 @@ const uint32_t
 	ATTRIB_POS		= 0,
 	ATTRIB_NORMAL	= 1,
 	ATTRIB_TEX0		= 2;
+
+static constexpr float g_cameraSpeed = .001f;
 
 struct BufferView
 {
@@ -229,21 +231,20 @@ static GLuint makeShader(GLenum type, const char* path)
 	GLint isCompiled = false;
 	glGetShaderiv(shader, GL_COMPILE_STATUS, &isCompiled);
 
-#ifndef glDebugMessageCallback
 	if (!isCompiled)
 	{
-		GLuint len = 0;
+		GLint len = 0;
 		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &len);
 		assert(len != 0);
-		const char* msg = malloc(len * sizeof * msg);
-		glGetShaderInfoLog(shader, len, NULL, msg);
-		OutputDebugStringA(msg);
+		char* msg = (char*)malloc(len * sizeof * msg);
+		glGetShaderInfoLog(shader, len, NULL, (GLchar*)msg);
+		std::cout << msg << '\n';
+
 		free(msg);
 
 		glDeleteShader(shader);
 		shader = 0;
 	}
-#endif // glDebugMessageCallback
 
 	if (!isCompiled)
 	{
@@ -278,7 +279,7 @@ constexpr static uint32_t getComponentTypeByteSize(GLenum type)
 	}
 }
 
-path filepath = "2.0/AnimatedCube/glTF/AnimatedCube.gltf";
+path filepath = "2.0/Sponza/glTF/Sponza.gltf";
 
 int main()
 {
@@ -304,7 +305,7 @@ int main()
 	{
 		GLuint
 			vShader = makeShader(GL_VERTEX_SHADER, "shader.vert"),
-			fShader = makeShader(GL_FRAGMENT_SHADER, "pbr.frag");
+			fShader = makeShader(GL_FRAGMENT_SHADER, "shader.frag");
 
 		assert(vShader != 0);
 		assert(fShader != 0);
@@ -313,6 +314,26 @@ int main()
 		glAttachShader(program, fShader);
 
 		glLinkProgram(program);
+
+		GLint isLinked = false;
+		glGetProgramiv(program, GL_LINK_STATUS, &isLinked);
+
+		if (!isLinked)
+		{
+			GLint len = 0;
+			glGetProgramiv(program, GL_INFO_LOG_LENGTH, &len);
+			assert(len != 0);
+			char* msg = (char*)malloc(len * sizeof * msg);
+			glGetProgramInfoLog(program, len, NULL, (GLchar*)msg);
+			std::cout << msg << '\n';
+
+			free(msg);
+
+			glDeleteProgram(program);
+			program = 0;
+			return 0;
+		}
+
 
 		glDetachShader(program, vShader);
 		glDetachShader(program, fShader);
@@ -341,7 +362,8 @@ int main()
 	auto gltf = json::parse([]()->std::string
 		{
 			std::ifstream in(filepath);
-			if (in.fail()) throw std::exception("Failed to read gltf file");
+			if (in.fail()) 
+				throw std::exception("Failed to read gltf file");
 
 			return (std::stringstream() << in.rdbuf()).str();
 		}
@@ -860,7 +882,7 @@ int main()
 		}
 		else if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_RELEASE)
 		{
-			speed = 0.1f;
+			speed = 0.01f;
 		}
 
 
@@ -977,14 +999,14 @@ int main()
 					}
 					else // To not screw up the rendering when no material at all is present
 					{
-						glProgramUniform4fv(program, 0, 1, glm::value_ptr(glm::vec4(1, 1, 1, 1)));
-						glProgramUniform1i (program, 1, false);
+						glProgramUniform4fv(program, 1, 1, glm::value_ptr(glm::vec4(1, 1, 1, 1)));
+						glProgramUniform1i (program, 2, false);
 
-						glProgramUniform2fv(program, 2, 1, glm::value_ptr(glm::vec2(1,1)));
-						glProgramUniform1i (program, 3, false);
+						glProgramUniform2fv(program, 3, 1, glm::value_ptr(glm::vec2(1,1)));
+						glProgramUniform1i (program, 4, false);
 
-						glProgramUniform3fv(program, 4, 1, glm::value_ptr(glm::vec3(1,1,1)));
-						glProgramUniform1i (program, 5, false);
+						glProgramUniform3fv(program, 5, 1, glm::value_ptr(glm::vec3(1,1,1)));
+						glProgramUniform1i (program, 6, false);
 					}
 
 					
